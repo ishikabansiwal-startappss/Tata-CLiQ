@@ -1,0 +1,181 @@
+@import '../../../styles/variables';
+
+.product-card {
+  display: flex;
+  flex-direction: column;
+  background: $bg-primary;
+  border: 1px solid $border-light;
+  transition: all $transition-normal;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+
+  &:hover {
+    box-shadow: $shadow-lg;
+    transform: translateY(-4px);
+
+    .product-card__image-hover {
+      opacity: 1;
+    }
+
+    .product-card__add-cart {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  &__image-wrapper {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 3/4;
+    background: $bg-secondary;
+  }
+
+  &__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity $transition-normal;
+  }
+
+  &__image-hover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity $transition-normal;
+  }
+
+  &__badge {
+    position: absolute;
+    top: $spacing-sm;
+    left: $spacing-sm;
+    background: $accent;
+    color: $text-white;
+    padding: 2px $spacing-sm;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+
+    &--new {
+      background: $primary;
+      left: auto;
+      right: $spacing-sm;
+    }
+  }
+
+  &__wishlist {
+    position: absolute;
+    top: $spacing-sm;
+    right: $spacing-sm;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: $radius-full;
+    color: $text-secondary;
+    transition: all $transition-fast;
+    opacity: 0;
+
+    &.active {
+      opacity: 1;
+      color: $error;
+    }
+
+    &:hover {
+      color: $error;
+    }
+  }
+
+  &:hover &__wishlist {
+    opacity: 1;
+  }
+
+  &__content {
+    padding: $spacing-md;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+    flex: 1;
+  }
+
+  &__brand {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: $text-light;
+  }
+
+  &__name {
+    font-family: $font-primary;
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: $text-primary;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &__price {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    margin-top: auto;
+
+    &-current {
+      font-size: 1rem;
+      font-weight: 600;
+      color: $primary;
+    }
+
+    &-original {
+      font-size: 0.85rem;
+      color: $text-light;
+      text-decoration: line-through;
+    }
+  }
+
+  &__colors {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+
+  &__color {
+    width: 14px;
+    height: 14px;
+    border-radius: $radius-full;
+    border: 1px solid $border-color;
+    display: block;
+
+    &-more {
+      font-size: 0.7rem;
+      color: $text-light;
+    }
+  }
+
+  &__add-cart {
+    width: 100%;
+    padding: $spacing-sm;
+    background: $primary;
+    color: $text-white;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all $transition-normal;
+    opacity: 0;
+    transform: translateY(4px);
+    margin-top: $spacing-sm;
+
+    &:hover {
+      background: $accent;
+    }
+  }
+}

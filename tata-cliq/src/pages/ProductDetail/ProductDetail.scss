@@ -1,0 +1,176 @@
+@import '../../styles/variables';
+
+.product-detail {
+  padding: $spacing-xl 0;
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-xl;
+    font-size: 0.85rem;
+    color: $text-light;
+
+    a { color: $text-secondary; &:hover { color: $accent; } }
+  }
+
+  &__main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $spacing-2xl;
+
+    @media (max-width: $breakpoint-md) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__gallery {
+    .product-detail__main-image {
+      position: relative;
+      aspect-ratio: 3/4;
+      background: $bg-secondary;
+      margin-bottom: $spacing-md;
+
+      img { width: 100%; height: 100%; object-fit: cover; }
+    }
+
+    .product-detail__wishlist-btn {
+      position: absolute;
+      top: $spacing-md;
+      right: $spacing-md;
+      width: 44px;
+      height: 44px;
+      background: rgba(255,255,255,0.9);
+      border-radius: $radius-full;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $error;
+      transition: all $transition-fast;
+    }
+  }
+
+  &__thumbnails {
+    display: flex;
+    gap: $spacing-sm;
+  }
+
+  &__thumb {
+    width: 80px;
+    height: 80px;
+    border: 2px solid $border-light;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color $transition-fast;
+
+    &.active { border-color: $accent; }
+
+    img { width: 100%; height: 100%; object-fit: cover; }
+  }
+
+  &__info {
+    .product-detail__brand {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: $text-light;
+    }
+
+    .product-detail__name {
+      font-family: $font-primary;
+      font-size: 1.75rem;
+      margin: $spacing-sm 0;
+    }
+  }
+
+  &__price {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    margin: $spacing-lg 0;
+
+    &-current { font-size: 1.5rem; font-weight: 600; color: $primary; }
+    &-original { font-size: 1rem; color: $text-light; text-decoration: line-through; }
+  }
+
+  &__discount {
+    background: #dc2626;
+    color: white;
+    padding: 2px $spacing-sm;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  &__description {
+    color: $text-secondary;
+    line-height: 1.7;
+    margin-bottom: $spacing-xl;
+  }
+
+  &__options {
+    margin-bottom: $spacing-xl;
+  }
+
+  &__colors, &__sizes, &__quantity {
+    margin-bottom: $spacing-lg;
+
+    h4 { font-size: 0.85rem; margin-bottom: $spacing-sm; text-transform: uppercase; letter-spacing: 0.5px; }
+  }
+
+  &__color-options { display: flex; gap: $spacing-sm; }
+  &__color-swatch {
+    width: 32px; height: 32px; border-radius: $radius-full;
+    border: 2px solid $border-color; cursor: pointer;
+    &.active { border-color: $accent; box-shadow: 0 0 0 2px white, 0 0 0 4px $accent; }
+  }
+
+  &__size-options { display: flex; gap: $spacing-sm; flex-wrap: wrap; }
+  &__size-btn {
+    padding: $spacing-sm $spacing-md;
+    border: 1px solid $border-color;
+    font-size: 0.85rem;
+    transition: all $transition-fast;
+    &.active { background: $primary; color: white; border-color: $primary; }
+    &:hover:not(.active) { border-color: $primary; }
+  }
+
+  &__quantity-controls {
+    display: flex; align-items: center; gap: $spacing-md;
+    button {
+      width: 36px; height: 36px; border: 1px solid $border-color;
+      font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
+    }
+    span { font-size: 1.1rem; min-width: 30px; text-align: center; }
+  }
+
+  &__actions {
+    display: flex; flex-direction: column; gap: $spacing-md; margin-bottom: $spacing-xl;
+  }
+
+  &__specs {
+    h4 { text-transform: uppercase; letter-spacing: 1px; margin-bottom: $spacing-md; }
+    ul { list-style: disc; padding-left: $spacing-lg; }
+    li { color: $text-secondary; margin-bottom: $spacing-xs; font-size: 0.9rem; }
+  }
+
+  &__reviews {
+    margin-top: $spacing-3xl;
+    padding-top: $spacing-2xl;
+    border-top: 1px solid $border-color;
+  }
+}
+
+.review-card {
+  padding: $spacing-lg 0;
+  border-bottom: 1px solid $border-light;
+
+  &__header {
+    display: flex; align-items: center; gap: $spacing-md; margin-bottom: $spacing-sm;
+  }
+
+  &__date { font-size: 0.8rem; color: $text-light; }
+
+  &__title { font-family: $font-primary; font-size: 1rem; margin-bottom: $spacing-xs; }
+
+  &__comment { color: $text-secondary; font-size: 0.9rem; line-height: 1.6; }
+}

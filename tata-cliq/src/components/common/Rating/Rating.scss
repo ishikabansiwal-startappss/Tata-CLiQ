@@ -1,0 +1,33 @@
+@import '../../../styles/variables';
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+
+  &__stars {
+    display: flex;
+    gap: 2px;
+  }
+
+  &__star {
+    color: $border-color;
+    transition: color $transition-fast;
+
+    &.filled {
+      color: $accent;
+    }
+  }
+
+  &__count {
+    font-size: 0.8rem;
+    color: $text-light;
+  }
+
+  &-lg {
+    .rating__star {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}

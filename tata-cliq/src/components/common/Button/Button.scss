@@ -1,0 +1,126 @@
+@import '../../../styles/variables';
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  font-family: $font-secondary;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all $transition-normal;
+  position: relative;
+  text-transform: uppercase;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  // Variants
+  &-primary {
+    background: $primary;
+    color: $text-white;
+    border-color: $primary;
+
+    &:hover:not(:disabled) {
+      background: $accent;
+      border-color: $accent;
+    }
+  }
+
+  &-secondary {
+    background: transparent;
+    color: $primary;
+    border-color: $primary;
+
+    &:hover:not(:disabled) {
+      background: $primary;
+      color: $text-white;
+    }
+  }
+
+  &-accent {
+    background: $accent;
+    color: $text-white;
+    border-color: $accent;
+
+    &:hover:not(:disabled) {
+      background: $accent-dark;
+      border-color: $accent-dark;
+    }
+  }
+
+  &-outline {
+    background: transparent;
+    color: $accent;
+    border-color: $accent;
+
+    &:hover:not(:disabled) {
+      background: $accent;
+      color: $text-white;
+    }
+  }
+
+  &-ghost {
+    background: transparent;
+    color: $text-primary;
+    border-color: transparent;
+
+    &:hover:not(:disabled) {
+      background: $bg-secondary;
+    }
+  }
+
+  // Sizes
+  &-sm {
+    padding: $spacing-xs $spacing-md;
+    font-size: 0.75rem;
+  }
+
+  &-md {
+    padding: $spacing-sm $spacing-lg;
+    font-size: 0.875rem;
+  }
+
+  &-lg {
+    padding: $spacing-md $spacing-xl;
+    font-size: 1rem;
+  }
+
+  &-xl {
+    padding: $spacing-md $spacing-2xl;
+    font-size: 1.125rem;
+  }
+
+  &-full {
+    width: 100%;
+  }
+
+  // Loading
+  &-loading {
+    .btn__loader {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      &-dot {
+        width: 6px;
+        height: 6px;
+        background: currentColor;
+        border-radius: $radius-full;
+        animation: btnBounce 0.6s infinite alternate;
+
+        &:nth-child(2) { animation-delay: 0.2s; }
+        &:nth-child(3) { animation-delay: 0.4s; }
+      }
+    }
+  }
+}
+
+@keyframes btnBounce {
+  from { opacity: 0.3; transform: translateY(0); }
+  to { opacity: 1; transform: translateY(-4px); }
+}

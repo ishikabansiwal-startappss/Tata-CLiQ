@@ -1,0 +1,62 @@
+@import '../../styles/variables';
+
+.cart-page {
+  padding: $spacing-xl 0;
+  min-height: 60vh;
+
+  &__header {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: $spacing-xl;
+  }
+
+  &__layout {
+    display: grid; grid-template-columns: 1fr 350px; gap: $spacing-2xl;
+    @media (max-width: $breakpoint-lg) { grid-template-columns: 1fr; }
+  }
+
+  &__items { display: flex; flex-direction: column; gap: $spacing-md; }
+
+  &__summary {
+    background: $bg-secondary; padding: $spacing-xl; height: fit-content; position: sticky; top: 140px;
+    h3 { font-family: $font-primary; margin-bottom: $spacing-lg; padding-bottom: $spacing-md; border-bottom: 1px solid $border-color; }
+  }
+
+  &__continue {
+    display: block; text-align: center; margin-top: $spacing-md; font-size: 0.85rem; color: $text-secondary;
+    &:hover { color: $accent; }
+  }
+}
+
+.cart-item {
+  display: grid; grid-template-columns: 120px 1fr auto; gap: $spacing-lg; padding: $spacing-lg;
+  border: 1px solid $border-light; align-items: center;
+  @media (max-width: $breakpoint-sm) { grid-template-columns: 80px 1fr; }
+
+  &__image { width: 120px; height: 150px; overflow: hidden; background: $bg-secondary;
+    @media (max-width: $breakpoint-sm) { width: 80px; height: 100px; }
+    img { width: 100%; height: 100%; object-fit: cover; }
+  }
+
+  &__brand { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: $text-light; }
+  &__name { font-family: $font-primary; font-size: 1rem; margin: $spacing-xs 0; }
+  &__options { display: flex; gap: $spacing-md; font-size: 0.85rem; color: $text-secondary; }
+  &__price { font-weight: 600; margin-top: $spacing-sm; }
+
+  &__actions {
+    display: flex; flex-direction: column; align-items: flex-end; gap: $spacing-md;
+    @media (max-width: $breakpoint-sm) { grid-column: 1 / -1; flex-direction: row; justify-content: space-between; }
+  }
+
+  &__quantity {
+    display: flex; align-items: center; gap: $spacing-sm; border: 1px solid $border-color;
+    button { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+    span { min-width: 24px; text-align: center; }
+  }
+
+  &__subtotal { font-weight: 600; font-size: 1.1rem; }
+  &__remove { font-size: 0.8rem; color: $error; text-transform: uppercase; letter-spacing: 0.5px; }
+}
+
+.cart-summary__row {
+  display: flex; justify-content: space-between; padding: $spacing-sm 0; font-size: 0.9rem;
+  &.cart-summary__total { border-top: 1px solid $border-color; margin-top: $spacing-sm; padding-top: $spacing-md; font-size: 1.1rem; font-weight: 600; }
+}

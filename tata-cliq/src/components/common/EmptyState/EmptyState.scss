@@ -1,0 +1,30 @@
+@import '../../../styles/variables';
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-3xl $spacing-lg;
+  text-align: center;
+
+  &__icon {
+    font-size: 3rem;
+    margin-bottom: $spacing-lg;
+    color: $text-light;
+  }
+
+  &__title {
+    font-family: $font-primary;
+    font-size: 1.5rem;
+    margin-bottom: $spacing-sm;
+    color: $text-primary;
+  }
+
+  &__message {
+    font-size: 0.95rem;
+    color: $text-secondary;
+    max-width: 400px;
+    line-height: 1.6;
+  }
+}

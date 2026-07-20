@@ -1,0 +1,42 @@
+@import '../../../styles/variables';
+
+.skeleton-el {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: $radius-sm;
+}
+
+.skeleton-text {
+  height: 14px;
+  margin-bottom: $spacing-sm;
+
+  &--sm { width: 80px; }
+  &--md { width: 150px; }
+  &--lg { width: 200px; }
+}
+
+.skeleton-image {
+  width: 100%;
+  aspect-ratio: 3/4;
+}
+
+.skeleton-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: $radius-full;
+}
+
+.skeleton-button {
+  width: 120px;
+  height: 40px;
+}
+
+.product-card-skeleton {
+  border: 1px solid $border-light;
+  overflow: hidden;
+
+  &__content {
+    padding: $spacing-md;
+  }
+}
