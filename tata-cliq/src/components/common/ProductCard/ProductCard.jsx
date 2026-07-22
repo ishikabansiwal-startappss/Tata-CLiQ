@@ -4,11 +4,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addToWishlist, removeFromWishlist, selectIsInWishlist } from '../../../redux/slices/wishlistSlice';
 import { addToCart } from '../../../redux/slices/cartSlice';
 import { formatPrice } from '../../../utils/format';
+import { useToast } from '../Toast/Toast';
 import Rating from '../Rating/Rating';
 import './ProductCard.scss';
 
 const ProductCard = React.memo(({ product }) => {
   const dispatch = useDispatch();
+  const { addToast } = useToast();
   const isInWishlist = useSelector(selectIsInWishlist(product.id));
 
   const handleWishlistToggle = (e) => {
@@ -30,6 +32,7 @@ const ProductCard = React.memo(({ product }) => {
       selectedSize: product.sizes[0],
       selectedColor: product.colors[0],
     }));
+    addToast(`${product.name} added to cart`, 'success');
   };
 
   return (

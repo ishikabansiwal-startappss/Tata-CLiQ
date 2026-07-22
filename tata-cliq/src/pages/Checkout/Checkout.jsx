@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { selectCartItems, selectCartTotal } from '../../redux/slices/cartSlice';
 import { formatPrice } from '../../utils/format';
 import Button from '../../components/common/Button/Button';
-// import './Checkout.scss';
+import './Checkout.scss';
 
 const Checkout = React.memo(() => {
   const items = useSelector(selectCartItems);

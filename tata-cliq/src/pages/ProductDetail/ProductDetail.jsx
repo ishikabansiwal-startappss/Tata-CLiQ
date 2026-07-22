@@ -1,40 +1,80 @@
-import React, { useState, useMemo } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { useProduct } from '../../hooks/useProducts';
-import { addToCart } from '../../redux/slices/cartSlice';
-import { toggleWishlist, selectIsInWishlist } from '../../redux/slices/wishlistSlice';
-import { formatPrice } from '../../utils/format';
-import Rating from '../../components/common/Rating/Rating';
-import Button from '../../components/common/Button/Button';
-import ProductCard from '../../components/common/ProductCard/ProductCard';
-import './ProductDetail.scss';
+import React, { useState, useCallback } from "react";
+import { useParams, Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useProduct } from "../../hooks/useProducts";
+import { addToCart } from "../../redux/slices/cartSlice";
+import {
+  toggleWishlist,
+  selectIsInWishlist,
+} from "../../redux/slices/wishlistSlice";
+import { formatPrice } from "../../utils/format";
+import { useToast } from "../../components/common/Toast/Toast";
+import Rating from "../../components/common/Rating/Rating";
+import Button from "../../components/common/Button/Button";
+import "./ProductDetail.scss";
 
 const ProductDetail = React.memo(() => {
   const { id } = useParams();
   const dispatch = useDispatch();
+
   const { data, isLoading } = useProduct(id);
+
   const [selectedImage, setSelectedImage] = useState(0);
-  const [selectedSize, setSelectedSize] = useState('');
-  const [selectedColor, setSelectedColor] = useState('');
+  const [selectedSize, setSelectedSize] = useState("");
+  const [selectedColor, setSelectedColor] = useState("");
   const [quantity, setQuantity] = useState(1);
+
+  const { addToast } = useToast();
 
   const product = data?.product;
   const reviews = data?.reviews || [];
+
   const isInWishlist = useSelector(selectIsInWishlist(Number(id)));
+
+  const handleAddToCart = useCallback(() => {
+    if (!product) return;
+
+    dispatch(
+      addToCart({
+        product,
+        quantity,
+        selectedSize: selectedSize || product.sizes?.[0],
+        selectedColor: selectedColor || product.colors?.[0],
+      })
+    );
+
+    addToast(`${product.name} added to cart`, "success");
+  }, [
+    dispatch,
+    product,
+    quantity,
+    selectedSize,
+    selectedColor,
+    addToast,
+  ]);
+
+  const handleToggleWishlist = useCallback(() => {
+    if (!product) return;
+
+    dispatch(toggleWishlist(product));
+  }, [dispatch, product]);
 
   if (isLoading) {
     return (
-      <div className="product-detail">
-        <div className="container">
-          <div className="product-detail__skeleton">
-            <div className="skeleton-el skeleton-image" style={{ height: 500 }} />
-            <div style={{ padding: '24px' }}>
-              <div className="skeleton-el skeleton-text skeleton-text--lg" />
-              <div className="skeleton-el skeleton-text" style={{ width: '60%' }} />
-              <div className="skeleton-el skeleton-text" style={{ width: '40%' }} />
-            </div>
-          </div>
+      <div className="container">
+        <div
+          className="skeleton-el skeleton-image"
+          style={{ height: 500 }}
+        />
+        <div style={{ padding: "24px" }}>
+          <div
+            className="skeleton-el skeleton-text"
+            style={{ width: "60%" }}
+          />
+          <div
+            className="skeleton-el skeleton-text"
+            style={{ width: "40%" }}
+          />
         </div>
       </div>
     );
@@ -42,29 +82,12 @@ const ProductDetail = React.memo(() => {
 
   if (!product) {
     return (
-      <div className="product-detail">
-        <div className="container">
-          <div className="product-detail__not-found">
-            <h2>Product not found</h2>
-            <Link to="/products">Browse Products</Link>
-          </div>
-        </div>
+      <div className="container">
+        <h2>Product not found</h2>
+        <Link to="/products">Browse Products</Link>
       </div>
     );
   }
-
-  const handleAddToCart = () => {
-    dispatch(addToCart({
-      product,
-      quantity,
-      selectedSize: selectedSize || product.sizes[0],
-      selectedColor: selectedColor || product.colors[0],
-    }));
-  };
-
-  const handleToggleWishlist = () => {
-    dispatch(toggleWishlist(product));
-  };
 
   return (
     <div className="product-detail">
@@ -195,9 +218,10 @@ const ProductDetail = React.memo(() => {
           </section>
         )}
       </div>
-    </div>
+    </div> 
   );
 });
 
-ProductDetail.displayName = 'ProductDetail';
+ProductDetail.displayName = "ProductDetail";
+
 export default ProductDetail;
