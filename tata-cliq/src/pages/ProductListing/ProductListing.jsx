@@ -73,9 +73,19 @@ const ProductListing = React.memo(() => {
         <div className={`product-listing__layout ${showFilters ? 'filters-open' : ''}`}>
           <aside className="product-listing__filters">
             <div className="filter-section">
-              <h4>Category</h4>
+              <div className="filter-section__header">
+                <h4>Category</h4>
+                {category && (
+                  <button
+                    className="filter-clear-btn"
+                    onClick={() => updateFilter('category', '')}
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
               {categories.map((cat) => (
-                <label key={cat.id} className="filter-checkbox">
+                <label key={cat.id} className={`filter-checkbox ${category === cat.slug ? 'active' : ''}`}>
                   <input
                     type="radio"
                     name="category"
@@ -87,9 +97,19 @@ const ProductListing = React.memo(() => {
               ))}
             </div>
             <div className="filter-section">
-              <h4>Brand</h4>
+              <div className="filter-section__header">
+                <h4>Brand</h4>
+                {brand && (
+                  <button
+                    className="filter-clear-btn"
+                    onClick={() => updateFilter('brand', '')}
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
               {brands.map((b) => (
-                <label key={b.id} className="filter-checkbox">
+                <label key={b.id} className={`filter-checkbox ${brand === b.slug ? 'active' : ''}`}>
                   <input
                     type="radio"
                     name="brand"

@@ -3,6 +3,7 @@ import ErrorBoundary from "./components/common/ErrorBoundary/ErrorBoundary";
 import { ToastProvider } from "./components/common/Toast/Toast";
 import AppRouter from "./routes/AppRouter";
 
+
 Sentry.init({
   dsn: import.meta.env.VITE_SENTRY_DSN || "",
   integrations: [Sentry.browserTracingIntegration(), Sentry.replayIntegration()],

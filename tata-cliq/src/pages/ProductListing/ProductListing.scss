@@ -70,12 +70,36 @@
       margin-bottom: $spacing-lg;
       border-bottom: 1px solid $border-light;
 
+      &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: $spacing-md;
+      }
+
       h4 {
         font-family: $font-secondary;
         font-size: 0.85rem;
         text-transform: uppercase;
         letter-spacing: 1px;
-        margin-bottom: $spacing-md;
+        margin-bottom: 0;
+      }
+    }
+
+    .filter-clear-btn {
+      font-size: 0.7rem;
+      color: $accent;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      padding: 2px $spacing-sm;
+      border: 1px solid $accent;
+      border-radius: $radius-sm;
+      transition: all $transition-fast;
+
+      &:hover {
+        background: $accent;
+        color: $text-white;
       }
     }
 

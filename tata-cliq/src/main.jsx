@@ -9,6 +9,8 @@ import {
 import App from "./App";
 import { store } from "./redux/store";
 import "./styles/global.scss";
+import { initializeAnalytics } from "./services/analytics";
+
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,13 +33,14 @@ async function enableMocking() {
 }
 
 enableMocking().then(() => {
+  initializeAnalytics();
   ReactDOM.createRoot(document.getElementById("root")).render(
-    <React.StrictMode>
-      <Provider store={store}>
-        <QueryClientProvider client={queryClient}>
-          <App />
-        </QueryClientProvider>
-      </Provider>
-    </React.StrictMode>
-  );
+  <React.StrictMode>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
+    </Provider>
+  </React.StrictMode>
+);
 });

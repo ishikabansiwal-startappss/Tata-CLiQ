@@ -223,6 +223,13 @@ export const products = [
     ],
     colors: ['#e8d5b7', '#800020', '#1a1a2e'],
     sizes: ['XS', 'S', 'M', 'L', 'XL'],
+    specifications: [
+      '100% Premium Chiffon',
+      'Smocked bodice for flexible fit',
+      'Adjustable spaghetti straps',
+      'Tiered skirt with ruffled hem',
+      'Side zip closure',
+    ],
     isNew: true,
     isFeatured: false,
     inStock: true,

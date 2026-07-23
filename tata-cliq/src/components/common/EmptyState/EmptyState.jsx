@@ -11,6 +11,5 @@ const EmptyState = React.memo(({ icon, title, message, action }) => {
     </div>
   );
 });
-
 EmptyState.displayName = 'EmptyState';
 export default EmptyState;

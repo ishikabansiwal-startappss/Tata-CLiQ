@@ -12,6 +12,7 @@ import { useToast } from "../../components/common/Toast/Toast";
 import Rating from "../../components/common/Rating/Rating";
 import Button from "../../components/common/Button/Button";
 import "./ProductDetail.scss";
+import { trackEvent } from "../../services/analytics";
 
 const ProductDetail = React.memo(() => {
   const { id } = useParams();
@@ -42,8 +43,16 @@ const ProductDetail = React.memo(() => {
         selectedColor: selectedColor || product.colors?.[0],
       })
     );
+    
 
     addToast(`${product.name} added to cart`, "success");
+
+    trackEvent({
+    category: "Cart",
+    action: "Add To Cart",
+    label: product.name,
+    value: product.price,
+  });
   }, [
     dispatch,
     product,
