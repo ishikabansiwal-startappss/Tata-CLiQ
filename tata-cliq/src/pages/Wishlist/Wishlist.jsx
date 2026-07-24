@@ -1,10 +1,11 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { selectWishlistItems, removeFromWishlist, clearWishlist } from '../../redux/slices/wishlistSlice';
+import { selectWishlistItems, clearWishlist } from '../../redux/slices/wishlistSlice';
 import ProductCard from '../../components/common/ProductCard/ProductCard';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
 import Button from '../../components/common/Button/Button';
+import { trackEngagement } from '../../services/analytics';
 import './Wishlist.scss';
 
 const Wishlist = React.memo(() => {
@@ -34,14 +35,17 @@ const Wishlist = React.memo(() => {
     );
   }
 
+  const handleClearAll = () => {
+    dispatch(clearWishlist());
+    trackEngagement('wishlist_cleared', `Cleared ${items.length} items`);
+  };
+
   return (
     <div className="wishlist-page">
       <div className="container">
         <div className="wishlist-page__header">
           <h1>My Wishlist ({items.length})</h1>
-          <Button variant="ghost" onClick={() => dispatch(clearWishlist())}>
-            Clear All
-          </Button>
+          <Button variant="ghost" onClick={handleClearAll}>Clear All</Button>
         </div>
         <div className="wishlist-page__grid">
           {items.map((product) => (

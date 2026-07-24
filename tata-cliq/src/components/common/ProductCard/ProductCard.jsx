@@ -5,6 +5,7 @@ import { addToWishlist, removeFromWishlist, selectIsInWishlist } from '../../../
 import { addToCart } from '../../../redux/slices/cartSlice';
 import { formatPrice } from '../../../utils/format';
 import { useToast } from '../Toast/Toast';
+import { trackSelectItem, trackAddToCart, trackAddToWishlist } from '../../../services/analytics';
 import Rating from '../Rating/Rating';
 import './ProductCard.scss';
 
@@ -20,6 +21,7 @@ const ProductCard = React.memo(({ product }) => {
       dispatch(removeFromWishlist(product.id));
     } else {
       dispatch(addToWishlist(product));
+      trackAddToWishlist(product);
     }
   };
 
@@ -33,10 +35,15 @@ const ProductCard = React.memo(({ product }) => {
       selectedColor: product.colors[0],
     }));
     addToast(`${product.name} added to cart`, 'success');
+    trackAddToCart(product, 1);
+  };
+
+  const handleProductClick = () => {
+    trackSelectItem(product);
   };
 
   return (
-    <Link to={`/product/${product.id}`} className="product-card">
+    <Link to={`/product/${product.id}`} className="product-card" onClick={handleProductClick}>
       <div className="product-card__image-wrapper">
         <img
           src={product.images[0]}

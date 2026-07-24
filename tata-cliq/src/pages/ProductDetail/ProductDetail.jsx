@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useProduct } from "../../hooks/useProducts";
@@ -9,10 +9,15 @@ import {
 } from "../../redux/slices/wishlistSlice";
 import { formatPrice } from "../../utils/format";
 import { useToast } from "../../components/common/Toast/Toast";
+import {
+  trackViewItem,
+  trackAddToCart,
+  trackAddToWishlist,
+  trackEngagement,
+} from "../../services/analytics";
 import Rating from "../../components/common/Rating/Rating";
 import Button from "../../components/common/Button/Button";
 import "./ProductDetail.scss";
-import { trackEvent } from "../../services/analytics";
 
 const ProductDetail = React.memo(() => {
   const { id } = useParams();
@@ -29,6 +34,13 @@ const ProductDetail = React.memo(() => {
 
   const product = data?.product;
   const reviews = data?.reviews || [];
+  const trackedRef = useRef(false);
+
+  useEffect(() => {
+    if (!product || trackedRef.current) return;
+    trackedRef.current = true;
+    trackViewItem(product);
+  }, [product]);
 
   const isInWishlist = useSelector(selectIsInWishlist(Number(id)));
 
@@ -43,30 +55,33 @@ const ProductDetail = React.memo(() => {
         selectedColor: selectedColor || product.colors?.[0],
       })
     );
-    
 
     addToast(`${product.name} added to cart`, "success");
-
-    trackEvent({
-    category: "Cart",
-    action: "Add To Cart",
-    label: product.name,
-    value: product.price,
-  });
-  }, [
-    dispatch,
-    product,
-    quantity,
-    selectedSize,
-    selectedColor,
-    addToast,
-  ]);
+    trackAddToCart(product, quantity);
+  }, [dispatch, product, quantity, selectedSize, selectedColor, addToast]);
 
   const handleToggleWishlist = useCallback(() => {
     if (!product) return;
-
     dispatch(toggleWishlist(product));
-  }, [dispatch, product]);
+    if (!isInWishlist) {
+      trackAddToWishlist(product);
+    }
+  }, [dispatch, product, isInWishlist]);
+
+  const handleImageChange = (index) => {
+    setSelectedImage(index);
+    trackEngagement("image_thumbnail_changed", product?.name);
+  };
+
+  const handleColorSelect = (color) => {
+    setSelectedColor(color);
+    trackEngagement("color_selected", `${product?.name}: ${color}`);
+  };
+
+  const handleSizeSelect = (size) => {
+    setSelectedSize(size);
+    trackEngagement("size_selected", `${product?.name}: ${size}`);
+  };
 
   if (isLoading) {
     return (
@@ -124,7 +139,7 @@ const ProductDetail = React.memo(() => {
                 <button
                   key={i}
                   className={`product-detail__thumb ${selectedImage === i ? 'active' : ''}`}
-                  onClick={() => setSelectedImage(i)}
+                  onClick={() => handleImageChange(i)}
                 >
                   <img src={img} alt={`${product.name} ${i + 1}`} />
                 </button>
@@ -158,7 +173,7 @@ const ProductDetail = React.memo(() => {
                       key={color}
                       className={`product-detail__color-swatch ${selectedColor === color ? 'active' : ''}`}
                       style={{ backgroundColor: color }}
-                      onClick={() => setSelectedColor(color)}
+                      onClick={() => handleColorSelect(color)}
                       title={color}
                     />
                   ))}
@@ -172,7 +187,7 @@ const ProductDetail = React.memo(() => {
                     <button
                       key={size}
                       className={`product-detail__size-btn ${selectedSize === size ? 'active' : ''}`}
-                      onClick={() => setSelectedSize(size)}
+                      onClick={() => handleSizeSelect(size)}
                     >
                       {size}
                     </button>
@@ -183,9 +198,9 @@ const ProductDetail = React.memo(() => {
               <div className="product-detail__quantity">
                 <h4>Quantity</h4>
                 <div className="product-detail__quantity-controls">
-                  <button onClick={() => setQuantity(Math.max(1, quantity - 1))}>-</button>
+                  <button onClick={() => { setQuantity(Math.max(1, quantity - 1)); trackEngagement("quantity_changed", String(quantity - 1)); }}>-</button>
                   <span>{quantity}</span>
-                  <button onClick={() => setQuantity(Math.min(10, quantity + 1))}>+</button>
+                  <button onClick={() => { setQuantity(Math.min(10, quantity + 1)); trackEngagement("quantity_changed", String(quantity + 1)); }}>+</button>
                 </div>
               </div>
             </div>
@@ -227,7 +242,7 @@ const ProductDetail = React.memo(() => {
           </section>
         )}
       </div>
-    </div> 
+    </div>
   );
 });
 

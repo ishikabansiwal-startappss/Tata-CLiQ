@@ -1,21 +1,26 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useProducts, useSearchSuggestions } from '../../hooks/useProducts';
+import { useProducts } from '../../hooks/useProducts';
 import ProductCard from '../../components/common/ProductCard/ProductCard';
 import { ProductCardSkeleton } from '../../components/common/Skeleton/Skeleton';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
+import { trackSearch, trackEngagement } from '../../services/analytics';
 import './Search.scss';
 
 const Search = React.memo(() => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q') || '';
-  const [searchInput, setSearchInput] = useState(query);
+  const trackedSearch = useRef(false);
 
   const { data, isLoading } = useProducts({ search: query, limit: 20 });
-  const { data: suggestionsData } = useSearchSuggestions(searchInput);
-
   const products = data?.products || [];
-  const suggestions = suggestionsData?.suggestions || [];
+
+  useEffect(() => {
+    if (query && !trackedSearch.current) {
+      trackedSearch.current = true;
+      trackSearch(query, products.length);
+    }
+  }, [query, products.length]);
 
   return (
     <div className="search-page">

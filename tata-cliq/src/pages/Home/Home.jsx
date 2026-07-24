@@ -1,23 +1,47 @@
-import React, { useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { useHeroBanners, usePromotionBanners, useCategories, useFeaturedProducts, useNewArrivals } from '../../hooks/useProducts';
 import ProductCard from '../../components/common/ProductCard/ProductCard';
 import { ProductCardSkeleton } from '../../components/common/Skeleton/Skeleton';
+import { trackEngagement, trackViewItemList } from '../../services/analytics';
 import './Home.scss';
 
 const Home = React.memo(() => {
-  const navigate = useNavigate();
   const { data: heroData, isLoading: heroLoading } = useHeroBanners();
   const { data: promoData } = usePromotionBanners();
   const { data: categoriesData } = useCategories();
   const { data: featuredData, isLoading: featuredLoading } = useFeaturedProducts();
   const { data: newArrivalsData, isLoading: newArrivalsLoading } = useNewArrivals();
+  const trackedFeatured = useRef(false);
+  const trackedNew = useRef(false);
 
   const banners = heroData?.banners || [];
   const promotions = promoData?.banners || [];
   const categories = categoriesData?.categories || [];
   const featured = featuredData?.products || [];
   const newArrivals = newArrivalsData?.products || [];
+
+  useEffect(() => {
+    if (featured.length > 0 && !trackedFeatured.current) {
+      trackedFeatured.current = true;
+      trackViewItemList(featured, 'Featured Collections');
+    }
+  }, [featured]);
+
+  useEffect(() => {
+    if (newArrivals.length > 0 && !trackedNew.current) {
+      trackedNew.current = true;
+      trackViewItemList(newArrivals, 'New Arrivals');
+    }
+  }, [newArrivals]);
+
+  const handleBannerClick = (banner) => {
+    trackEngagement('hero_banner_clicked', banner.title);
+  };
+
+  const handlePromoClick = (promo) => {
+    trackEngagement('promotion_banner_clicked', promo.title);
+  };
 
   return (
     <div className="home">
@@ -28,21 +52,21 @@ const Home = React.memo(() => {
         ) : (
           <div className="hero__slider">
             {banners.map((banner, index) => (
-              <div
+              <Link
                 key={banner.id}
+                to={banner.link}
                 className={`hero__slide ${index === 0 ? 'active' : ''}`}
                 style={{ backgroundImage: `url(${banner.image})` }}
+                onClick={() => handleBannerClick(banner)}
               >
                 <div className="hero__overlay" />
                 <div className="container hero__content">
                   <span className="hero__subtitle">{banner.subtitle}</span>
                   <h1 className="hero__title">{banner.title}</h1>
                   <p className="hero__description">{banner.description}</p>
-                  <Link to={banner.link} className="hero__cta">
-                    {banner.buttonText}
-                  </Link>
+                  <span className="hero__cta">{banner.buttonText}</span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}
@@ -98,6 +122,7 @@ const Home = React.memo(() => {
                 to={promo.link}
                 className="promotions__card"
                 style={{ backgroundImage: `url(${promo.image})` }}
+                onClick={() => handlePromoClick(promo)}
               >
                 <div className="promotions__overlay" />
                 <div className="promotions__content">

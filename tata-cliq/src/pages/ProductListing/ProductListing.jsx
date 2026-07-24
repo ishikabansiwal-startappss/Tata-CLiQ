@@ -1,14 +1,16 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useProducts, useCategories, useBrands } from '../../hooks/useProducts';
 import ProductCard from '../../components/common/ProductCard/ProductCard';
 import { ProductCardSkeleton } from '../../components/common/Skeleton/Skeleton';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
+import { trackViewItemList, trackFilter, trackSort, trackEngagement } from '../../services/analytics';
 import './ProductListing.scss';
 
 const ProductListing = React.memo(() => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [showFilters, setShowFilters] = useState(false);
+  const trackedList = useRef(false);
 
   const category = searchParams.get('category') || '';
   const brand = searchParams.get('brand') || '';
@@ -26,12 +28,26 @@ const ProductListing = React.memo(() => {
   const categories = categoriesData?.categories || [];
   const brands = brandsData?.brands || [];
 
+  useEffect(() => {
+    if (products.length > 0 && !trackedList.current) {
+      trackedList.current = true;
+      const listName = category || brand || 'All Products';
+      trackViewItemList(products, listName);
+    }
+  }, [products, category, brand]);
+
   const updateFilter = (key, value) => {
     const params = new URLSearchParams(searchParams);
     if (value) params.set(key, value);
     else params.delete(key);
     params.set('page', '1');
     setSearchParams(params);
+    trackedList.current = false;
+
+    if (key === 'category') trackFilter('category', value || 'all');
+    else if (key === 'brand') trackFilter('brand', value || 'all');
+    else if (key === 'sort') trackSort(value || 'featured');
+    else if (key === 'minPrice' || key === 'maxPrice') trackFilter('price_range', `${minPrice}-${maxPrice}`);
   };
 
   const sortOptions = [
@@ -76,19 +92,13 @@ const ProductListing = React.memo(() => {
               <div className="filter-section__header">
                 <h4>Category</h4>
                 {category && (
-                  <button
-                    className="filter-clear-btn"
-                    onClick={() => updateFilter('category', '')}
-                  >
-                    Clear
-                  </button>
+                  <button className="filter-clear-btn" onClick={() => updateFilter('category', '')}>Clear</button>
                 )}
               </div>
               {categories.map((cat) => (
                 <label key={cat.id} className={`filter-checkbox ${category === cat.slug ? 'active' : ''}`}>
                   <input
-                    type="radio"
-                    name="category"
+                    type="radio" name="category"
                     checked={category === cat.slug}
                     onChange={() => updateFilter('category', category === cat.slug ? '' : cat.slug)}
                   />
@@ -100,19 +110,13 @@ const ProductListing = React.memo(() => {
               <div className="filter-section__header">
                 <h4>Brand</h4>
                 {brand && (
-                  <button
-                    className="filter-clear-btn"
-                    onClick={() => updateFilter('brand', '')}
-                  >
-                    Clear
-                  </button>
+                  <button className="filter-clear-btn" onClick={() => updateFilter('brand', '')}>Clear</button>
                 )}
               </div>
               {brands.map((b) => (
                 <label key={b.id} className={`filter-checkbox ${brand === b.slug ? 'active' : ''}`}>
                   <input
-                    type="radio"
-                    name="brand"
+                    type="radio" name="brand"
                     checked={brand === b.slug}
                     onChange={() => updateFilter('brand', brand === b.slug ? '' : b.slug)}
                   />
@@ -123,19 +127,9 @@ const ProductListing = React.memo(() => {
             <div className="filter-section">
               <h4>Price Range</h4>
               <div className="filter-price">
-                <input
-                  type="number"
-                  placeholder="Min"
-                  value={minPrice}
-                  onChange={(e) => updateFilter('minPrice', e.target.value)}
-                />
+                <input type="number" placeholder="Min" value={minPrice} onChange={(e) => updateFilter('minPrice', e.target.value)} />
                 <span>to</span>
-                <input
-                  type="number"
-                  placeholder="Max"
-                  value={maxPrice}
-                  onChange={(e) => updateFilter('maxPrice', e.target.value)}
-                />
+                <input type="number" placeholder="Max" value={maxPrice} onChange={(e) => updateFilter('maxPrice', e.target.value)} />
               </div>
             </div>
           </aside>
@@ -146,10 +140,7 @@ const ProductListing = React.memo(() => {
                 {Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)}
               </div>
             ) : products.length === 0 ? (
-              <EmptyState
-                title="No products found"
-                message="Try adjusting your filters or search criteria."
-              />
+              <EmptyState title="No products found" message="Try adjusting your filters or search criteria." />
             ) : (
               <>
                 <div className="product-listing__grid">
@@ -163,7 +154,12 @@ const ProductListing = React.memo(() => {
                       <button
                         key={p}
                         className={`pagination__btn ${page === p ? 'active' : ''}`}
-                        onClick={() => updateFilter('page', p.toString())}
+                        onClick={() => {
+                          const params = new URLSearchParams(searchParams);
+                          params.set('page', p.toString());
+                          setSearchParams(params);
+                          trackEngagement('pagination_changed', `page_${p}`);
+                        }}
                       >
                         {p}
                       </button>

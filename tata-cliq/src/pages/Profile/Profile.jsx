@@ -2,6 +2,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUser, logout, selectUser, selectIsAuthenticated } from '../../redux/slices/userSlice';
 import Button from '../../components/common/Button/Button';
+import { trackLogin, trackEngagement } from '../../services/analytics';
 import './Profile.scss';
 
 const Profile = React.memo(() => {
@@ -17,10 +18,12 @@ const Profile = React.memo(() => {
       phone: '+91 98765 43210',
       memberSince: '2024',
     }));
+    trackLogin('demo');
   };
 
   const handleLogout = () => {
     dispatch(logout());
+    trackEngagement('logout', user?.name);
   };
 
   if (!isAuthenticated) {
@@ -46,9 +49,7 @@ const Profile = React.memo(() => {
       <div className="container">
         <h1>My Profile</h1>
         <div className="profile__card">
-          <div className="profile__avatar">
-            {user.name.charAt(0).toUpperCase()}
-          </div>
+          <div className="profile__avatar">{user.name.charAt(0).toUpperCase()}</div>
           <div className="profile__info">
             <h2>{user.name}</h2>
             <p>{user.email}</p>
@@ -59,9 +60,7 @@ const Profile = React.memo(() => {
         </div>
         <div className="profile__section">
           <h3>Order History</h3>
-          <div className="profile__empty">
-            <p>No orders yet.</p>
-          </div>
+          <div className="profile__empty"><p>No orders yet.</p></div>
         </div>
       </div>
     </div>

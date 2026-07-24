@@ -1,16 +1,25 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { selectCartItems, selectCartTotal, removeFromCart, updateQuantity, clearCart } from '../../redux/slices/cartSlice';
 import { formatPrice } from '../../utils/format';
 import Button from '../../components/common/Button/Button';
 import EmptyState from '../../components/common/EmptyState/EmptyState';
+import { trackViewCart, trackRemoveFromCart, trackEngagement } from '../../services/analytics';
 import './Cart.scss';
 
 const Cart = React.memo(() => {
   const dispatch = useDispatch();
   const items = useSelector(selectCartItems);
   const total = useSelector(selectCartTotal);
+  const tracked = useRef(false);
+
+  useEffect(() => {
+    if (items.length > 0 && !tracked.current) {
+      tracked.current = true;
+      trackViewCart(items, total);
+    }
+  }, [items, total]);
 
   if (items.length === 0) {
     return (
@@ -36,6 +45,16 @@ const Cart = React.memo(() => {
       </div>
     );
   }
+
+  const handleRemove = (item) => {
+    dispatch(removeFromCart({ id: item.id, selectedSize: item.selectedSize, selectedColor: item.selectedColor }));
+    trackRemoveFromCart(item);
+  };
+
+  const handleQuantity = (item, newQty) => {
+    dispatch(updateQuantity({ id: item.id, quantity: newQty, selectedSize: item.selectedSize, selectedColor: item.selectedColor }));
+    trackEngagement('update_quantity', `${item.name}: ${newQty}`);
+  };
 
   return (
     <div className="cart-page">
@@ -66,41 +85,23 @@ const Cart = React.memo(() => {
                 </div>
                 <div className="cart-item__actions">
                   <div className="cart-item__quantity">
-                    <button onClick={() => dispatch(updateQuantity({ id: item.id, quantity: item.quantity - 1, selectedSize: item.selectedSize, selectedColor: item.selectedColor }))}>-</button>
+                    <button onClick={() => handleQuantity(item, Math.max(1, item.quantity - 1))}>-</button>
                     <span>{item.quantity}</span>
-                    <button onClick={() => dispatch(updateQuantity({ id: item.id, quantity: item.quantity + 1, selectedSize: item.selectedSize, selectedColor: item.selectedColor }))}>+</button>
+                    <button onClick={() => handleQuantity(item, Math.min(10, item.quantity + 1))}>+</button>
                   </div>
                   <div className="cart-item__subtotal">{formatPrice(item.price * item.quantity)}</div>
-                  <button
-                    className="cart-item__remove"
-                    onClick={() => dispatch(removeFromCart({ id: item.id, selectedSize: item.selectedSize, selectedColor: item.selectedColor }))}
-                  >
-                    Remove
-                  </button>
+                  <button className="cart-item__remove" onClick={() => handleRemove(item)}>Remove</button>
                 </div>
               </div>
             ))}
           </div>
           <div className="cart-page__summary">
             <h3>Order Summary</h3>
-            <div className="cart-summary__row">
-              <span>Subtotal</span>
-              <span>{formatPrice(total)}</span>
-            </div>
-            <div className="cart-summary__row">
-              <span>Shipping</span>
-              <span>Free</span>
-            </div>
-            <div className="cart-summary__row cart-summary__total">
-              <span>Total</span>
-              <span>{formatPrice(total)}</span>
-            </div>
-            <Link to="/checkout">
-              <Button variant="accent" size="lg" fullWidth>Proceed to Checkout</Button>
-            </Link>
-            <Link to="/products" className="cart-page__continue">
-              Continue Shopping
-            </Link>
+            <div className="cart-summary__row"><span>Subtotal</span><span>{formatPrice(total)}</span></div>
+            <div className="cart-summary__row"><span>Shipping</span><span>Free</span></div>
+            <div className="cart-summary__row cart-summary__total"><span>Total</span><span>{formatPrice(total)}</span></div>
+            <Link to="/checkout"><Button variant="accent" size="lg" fullWidth>Proceed to Checkout</Button></Link>
+            <Link to="/products" className="cart-page__continue">Continue Shopping</Link>
           </div>
         </div>
       </div>

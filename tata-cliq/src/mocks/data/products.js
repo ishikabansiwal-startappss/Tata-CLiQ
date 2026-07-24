@@ -24,7 +24,7 @@ export const products = [
     brandSlug: 'luxora',
     category: 'Women',
     categorySlug: 'women',
-    price: 28999,
+    price: 100,
     originalPrice: 35999,
     discount: 19,
     rating: 4.8,
